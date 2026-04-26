@@ -101,6 +101,7 @@ function HomePage() {
         if (selectedGenre || selectedYear) {
             handleFilter();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedGenre, selectedYear]);
 
     const handleSearch = async (e) => {
@@ -209,7 +210,7 @@ function HomePage() {
                     <section className="movie-section">
                         <h2 className="section-title">
                             🎯 Filtered Results
-                            {selectedGenre && ` - ${genres.find(g => g.id == selectedGenre)?.name}`}
+                            {selectedGenre && ` - ${genres.find(g => g.id === selectedGenre)?.name}`}
                             {selectedYear && ` - ${selectedYear}`}
                         </h2>
                         {filtering ? (

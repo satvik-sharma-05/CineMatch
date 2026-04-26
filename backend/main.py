@@ -352,34 +352,42 @@ def recommend_movies(movie_name: str):
                 for movie_idx in similar_indices:
                     movie = movies_df.iloc[movie_idx]
                     similarity_score = sim_scores[movie_idx]
+                    movie_title = movie['title']
                     
-                    # Try to get movie ID for TMDB poster
-                    movie_id = None
-                    if 'id' in movie:
-                        movie_id = movie['id']
-                    elif 'movie_id' in movie:
-                        movie_id = movie['movie_id']
-                    else:
-                        movie_id = movie_idx  # Fallback to index
-                    
-                    # Get poster from TMDB
+                    # Search TMDB by title to get correct poster
                     poster = "https://via.placeholder.com/500x750?text=No+Poster"
+                    movie_id = 0
+                    overview = movie.get('overview', 'No overview available')
+                    vote_average = float(movie.get('vote_average', 0))
+                    
                     try:
-                        if movie_id:
-                            url = f"{TMDB_BASE_URL}/movie/{movie_id}?api_key={TMDB_API_KEY}"
-                            tmdb_data = tmdb_request(url, f"movie_{movie_id}")
-                            if tmdb_data and tmdb_data.get('poster_path'):
-                                poster = f"https://image.tmdb.org/t/p/w500{tmdb_data.get('poster_path')}"
+                        # Search TMDB for the movie by title
+                        search_url = f"{TMDB_BASE_URL}/search/movie?api_key={TMDB_API_KEY}&query={movie_title}"
+                        search_data = tmdb_request(search_url, f"search_{movie_title}")
+                        
+                        if search_data and search_data.get('results'):
+                            # Get the first result (most relevant)
+                            tmdb_movie = search_data['results'][0]
+                            movie_id = tmdb_movie.get('id', 0)
+                            
+                            if tmdb_movie.get('poster_path'):
+                                poster = f"https://image.tmdb.org/t/p/w500{tmdb_movie['poster_path']}"
+                            
+                            # Use TMDB data if available (more up-to-date)
+                            if tmdb_movie.get('overview'):
+                                overview = tmdb_movie['overview']
+                            if tmdb_movie.get('vote_average'):
+                                vote_average = float(tmdb_movie['vote_average'])
                     except Exception as e:
-                        print(f"⚠️ Could not fetch poster for {movie['title']}: {e}")
+                        print(f"⚠️ Could not fetch TMDB data for {movie_title}: {e}")
                     
                     recommendations.append({
-                        'title': movie['title'],
+                        'title': movie_title,
                         'poster': poster,
-                        'overview': movie.get('overview', 'No overview available'),
-                        'vote_average': float(movie.get('vote_average', 0)),
+                        'overview': overview,
+                        'vote_average': vote_average,
                         'popularity': float(movie.get('popularity', 0)),
-                        'id': int(movie_id) if movie_id else 0,
+                        'id': movie_id,
                         'similarity': float(similarity_score)
                     })
                 

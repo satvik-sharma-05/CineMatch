@@ -1,27 +1,68 @@
-# 🎬 CineMatch
+# CineMatch
 
-AI-powered movie recommendation system using TF-IDF + Cosine Similarity with React frontend and FastAPI backend.
+> An intelligent movie recommendation system powered by machine learning and natural language processing.
 
-## ✨ Features
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://cine-match-blond-nine.vercel.app/)
+[![API](https://img.shields.io/badge/API-active-blue)](https://cinematch-n7vq.onrender.com/)
+[![Python](https://img.shields.io/badge/python-3.14.3-blue)](https://www.python.org/)
+[![React](https://img.shields.io/badge/react-18-61dafb)](https://reactjs.org/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-- **🤖 AI Recommendations**: Custom ML model trained on 41,371 movies
-- **🎬 Hybrid System**: ML model for dataset movies + TMDB fallback for new releases
-- **🎯 Visual Indicators**: Green badge (AI) vs Blue badge (TMDB)
-- **🔍 Advanced Search**: Filter by genre, year, and search by title
-- **🎭 Rich Data**: Cast, trailers, budget, revenue, ratings
-- **📱 Responsive Design**: Works on desktop and mobile
+## Overview
 
-## 🚀 Quick Start
+CineMatch is a full-stack movie recommendation platform that combines content-based filtering with real-time movie data. The system analyzes movie plots, genres, and metadata using TF-IDF vectorization and cosine similarity to deliver personalized recommendations from a dataset of 41,371 films.
+
+**Live Application**: [https://cine-match-blond-nine.vercel.app/](https://cine-match-blond-nine.vercel.app/)  
+**API Endpoint**: [https://cinematch-n7vq.onrender.com/](https://cinematch-n7vq.onrender.com/)
+
+## Features
+
+- **Content-Based Recommendations**: ML model trained on 41,371 movies using TF-IDF and cosine similarity
+- **Hybrid Architecture**: Seamless fallback to TMDB API for comprehensive coverage
+- **Real-Time Data**: Integration with TMDB for current movie information, cast, and trailers
+- **Advanced Filtering**: Search and filter by genre, year, and popularity
+- **Responsive Design**: Optimized for desktop and mobile devices
+- **Transparent AI**: Visual indicators distinguish ML recommendations from API suggestions
+
+## Technology Stack
 
 ### Backend
+- **Framework**: FastAPI (Python 3.14.3)
+- **ML Libraries**: scikit-learn, NLTK, Pandas, NumPy
+- **API Integration**: TMDB REST API
+- **Deployment**: Render
+
+### Frontend
+- **Framework**: React 18
+- **Routing**: React Router v6
+- **HTTP Client**: Axios
+- **Styling**: CSS3
+- **Deployment**: Vercel
+
+### Machine Learning
+- **Algorithm**: TF-IDF Vectorization + Cosine Similarity
+- **Feature Engineering**: 50,000 TF-IDF features with bigram analysis
+- **Text Processing**: NLTK tokenization, stopword removal, lemmatization
+- **Dataset**: 41,371 unique movies (deduplicated by rating)
+
+## Quick Start
+
+### Prerequisites
+- Python 3.8+
+- Node.js 14+
+- TMDB API Key ([Get one here](https://www.themoviedb.org/settings/api))
+
+### Backend Setup
+
 ```bash
 cd backend
 pip install -r requirements.txt
-echo "TMBD_API=your_tmdb_api_key" > .env
+echo "TMBD_API=your_api_key" > .env
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-### Frontend
+### Frontend Setup
+
 ```bash
 cd frontend
 npm install
@@ -29,157 +70,150 @@ echo "REACT_APP_API_URL=http://localhost:8000" > .env
 npm start
 ```
 
-Visit: http://localhost:3000
+Access the application at `http://localhost:3000`
 
-Get TMDB API key: https://www.themoviedb.org/settings/api
+## Architecture
 
-## 📁 Project Structure
+### System Design
+
+```
+┌─────────────┐      ┌──────────────┐      ┌─────────────┐
+│   React     │─────▶│   FastAPI    │─────▶│   TMDB API  │
+│  Frontend   │      │   Backend    │      │             │
+└─────────────┘      └──────────────┘      └─────────────┘
+                            │
+                            ▼
+                     ┌──────────────┐
+                     │  ML Model    │
+                     │  (41K movies)│
+                     └──────────────┘
+```
+
+### ML Pipeline
+
+1. **Data Preprocessing**: Combine overview, genres, and tagline
+2. **Text Normalization**: Tokenization, stopword removal, lemmatization
+3. **Feature Extraction**: TF-IDF vectorization (50K features, bigrams)
+4. **Similarity Computation**: Cosine similarity between movie vectors
+5. **Recommendation Generation**: Top-5 similar movies by content
+
+## API Documentation
+
+### Core Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | Health check and model statistics |
+| GET | `/recommend/{movie_name}` | Get AI-powered recommendations |
+| GET | `/movies/{id}` | Retrieve detailed movie information |
+| GET | `/movies/trending` | Fetch trending movies |
+| GET | `/movies/popular` | Get popular movies |
+| GET | `/movies/search/{query}` | Search movies by title |
+| GET | `/movies/discover` | Filter movies by genre/year |
+| GET | `/ml-movies` | List all movies in ML dataset |
+
+Full API documentation available at: [https://cinematch-n7vq.onrender.com/docs](https://cinematch-n7vq.onrender.com/docs)
+
+## Project Structure
 
 ```
 cinematch/
-├── backend/              # FastAPI backend
-│   ├── main.py          # API endpoints
-│   └── requirements.txt # Python dependencies
-├── frontend/            # React frontend
-│   └── src/
-│       ├── App.js
-│       └── pages/       # HomePage, MovieDetailsPage, AboutPage
-├── data/                # ML model files (41,371 movies)
-│   ├── df.pkl          # Movie dataset
-│   ├── tfidf_matrix.pkl # TF-IDF vectors
-│   ├── indices.pkl     # Title-to-index mapping
-│   └── tfidf.pkl       # TF-IDF vectorizer
-├── scripts/             # Original notebook
-│   └── Project_1.ipynb
-└── docs/                # Documentation
-    └── TUTORIAL.md
+├── backend/
+│   ├── main.py              # FastAPI application
+│   └── requirements.txt     # Python dependencies
+├── frontend/
+│   ├── src/
+│   │   ├── App.js          # Main application component
+│   │   └── pages/          # Page components
+│   └── package.json        # Node dependencies
+├── data/
+│   ├── df.pkl              # Movie dataset
+│   ├── tfidf_matrix.pkl    # TF-IDF vectors
+│   ├── indices.pkl         # Title mappings
+│   └── tfidf.pkl           # Vectorizer
+├── scripts/
+│   └── Project_1.ipynb     # Original ML notebook
+└── docs/
+    └── TUTORIAL.md         # Technical documentation
 ```
 
-## 🤖 ML Model
+## Model Performance
 
-**Algorithm**: TF-IDF + Cosine Similarity  
-**Dataset**: 41,371 unique movies (deduplicated by highest rating)  
-**Features**: 50,000 TF-IDF features with bigrams (1-2 word combinations)  
-**Preprocessing**: NLTK tokenization, stopword removal, lemmatization
+| Metric | Value |
+|--------|-------|
+| Dataset Size | 41,371 movies |
+| Feature Dimensions | 50,000 TF-IDF features |
+| Recommendation Latency | <100ms (cached) |
+| API Response Time | 1-2s (uncached) |
+| Coverage | Universal (ML + TMDB fallback) |
 
-### How It Works
-1. **Text Processing**: Combines movie overview + genres + tagline into "tags"
-2. **Preprocessing**: Removes stopwords, lemmatizes words, tokenizes text
-3. **Vectorization**: TF-IDF with max_features=50000, ngram_range=(1,2)
-4. **Similarity**: Cosine similarity between movie vectors
-5. **Recommendations**: Returns top 5 most similar movies
+## Deployment
 
-### Hybrid System
-- **ML Model**: Used for 41K+ movies in training dataset
-- **TMDB API**: Fallback for newer movies not in dataset
-- **Smart Poster Fetching**: Searches TMDB by title for accurate posters
+### Production Deployment
 
-## 🔌 API Endpoints
+**Backend (Render)**
+```bash
+# Automatic deployment via render.yaml
+# Environment: TMBD_API=your_key
+```
 
-- `GET /` - Health check and model stats
-- `GET /movies/trending` - Trending movies
-- `GET /movies/popular` - Popular movies
-- `GET /movies/search/{query}` - Search movies
-- `GET /movies/{id}` - Movie details with cast/trailer
-- `GET /recommend/{movie_name}` - AI recommendations
-- `GET /ml-movies` - List of movies in ML model
-- `GET /movies/genres` - Available genres
-- `GET /movies/discover` - Filter by genre/year
+**Frontend (Vercel)**
+```bash
+# Automatic deployment via Git integration
+# Environment: REACT_APP_API_URL=https://cinematch-n7vq.onrender.com
+```
 
-## 📚 Documentation
+See [DEPLOY.md](DEPLOY.md) for detailed deployment instructions.
 
-- **DEPLOY.md**: Full deployment guide
-- **RENDER_SETUP.md**: Render-specific setup
-- **DEPLOYMENT_CHECKLIST.md**: Step-by-step checklist
-- **BUILD_NOTE.md**: Python 3.14.3 compatibility notes
-- **docs/TUTORIAL.md**: Technical deep dive
+## Development
 
-## 🛠️ Tech Stack
+### Running Tests
+```bash
+# Backend
+cd backend
+pytest
 
-**Frontend**
-- React 18
-- React Router
-- Axios
-- CSS3
+# Frontend
+cd frontend
+npm test
+```
 
-**Backend**
-- FastAPI
-- scikit-learn (TF-IDF, Cosine Similarity)
-- NLTK (Text preprocessing)
-- Pandas (Data manipulation)
-- Python 3.14.3
+### Code Quality
+```bash
+# Python linting
+flake8 backend/
 
-**External API**
-- TMDB API (Movie data, posters, cast)
+# JavaScript linting
+cd frontend && npm run lint
+```
 
-**ML Model**
-- TF-IDF Vectorization
-- Cosine Similarity
-- Content-based filtering
+## Contributing
 
-## 🎯 Key Features Explained
+Contributions are welcome! Please follow these steps:
 
-### AI Transparency
-Visit `/about` page to learn how the ML model works, what data it uses, and how recommendations are generated.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-### Source Indicators
-- 🟢 **Green Badge**: Recommendations from AI model (content-based)
-- 🔵 **Blue Badge**: Recommendations from TMDB API (collaborative)
+## License
 
-### Smart Poster Fetching
-Backend searches TMDB by movie title to ensure accurate posters, even for older movies with outdated IDs.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Caching System
-1-hour cache for TMDB API responses to improve performance and reduce API calls.
+## Acknowledgments
 
-## 🚀 Deployment
+- [The Movie Database (TMDB)](https://www.themoviedb.org/) for comprehensive movie data
+- [scikit-learn](https://scikit-learn.org/) for machine learning algorithms
+- [NLTK](https://www.nltk.org/) for natural language processing tools
+- [FastAPI](https://fastapi.tiangolo.com/) for the modern Python web framework
+- [React](https://reactjs.org/) for the frontend framework
 
-### Backend (Render)
-1. Connect GitHub repo
-2. Set Root Directory: `backend`
-3. Add environment variable: `TMBD_API=your_key`
-4. Deploy!
+## Contact
 
-### Frontend (Vercel)
-1. Connect GitHub repo
-2. Set Root Directory: `frontend`
-3. Add environment variable: `REACT_APP_API_URL=your_backend_url`
-4. Deploy!
-
-See **DEPLOY.md** for detailed instructions.
-
-## 🎓 Learning Outcomes
-
-This project demonstrates:
-- Full-stack development (React + FastAPI)
-- Machine Learning (TF-IDF, Cosine Similarity)
-- Natural Language Processing (NLTK)
-- API integration (TMDB)
-- Caching strategies
-- Error handling and retry logic
-- Hybrid recommendation systems
-- Production deployment
-
-## 📊 Model Performance
-
-- **Dataset Size**: 41,371 unique movies
-- **Feature Space**: 50,000 TF-IDF features
-- **Recommendation Quality**: High-quality content-based matches
-- **Coverage**: Universal (ML model + TMDB fallback)
-- **Response Time**: <100ms (cached), 1-2s (uncached)
-
-## 📄 License
-
-MIT License - Free to use for learning and portfolio purposes.
-
-## 🙏 Acknowledgments
-
-- **TMDB**: Movie data and posters
-- **scikit-learn**: ML algorithms
-- **NLTK**: Text preprocessing
-- **FastAPI**: Modern Python web framework
-- **React**: Frontend framework
+For questions or feedback, please open an issue on GitHub.
 
 ---
 
-Built with ❤️ for movie lovers and ML enthusiasts!
+**Live Demo**: [https://cine-match-blond-nine.vercel.app/](https://cine-match-blond-nine.vercel.app/)  
+**API Documentation**: [https://cinematch-n7vq.onrender.com/docs](https://cinematch-n7vq.onrender.com/docs)
